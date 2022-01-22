@@ -28,10 +28,12 @@ contract Election{
 
     function vote (uint _candidateId) public {
         //require that they haven't voted yet
+        //console.log(msg.sender, " is voting for candidate ", _candidateId);
         require(!voters[msg.sender]);
-
+        //console.log("passed double voting require");
         //require a valid candidate
         require(_candidateId > 0 && _candidateId <= candidatesCount);
+        //console.log("passed valid candidate require");
 
         //record that voter has voted
         voters[msg.sender] = true;
