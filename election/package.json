@@ -15,5 +15,8 @@
   "devDependencies": {
     "lite-server": "^2.3.0",
     "truffle": "5.0.0-beta.0"
+  },
+  "dependencies": {
+    "bower": "^1.8.13"
   }
 }
