@@ -244,7 +244,7 @@ contract Election {
     function getWinningCandidateName() onlyAfterVotesTallied 
         public view
             returns (string) {
-            return candidates[winningCandidateId].name;
+            return getCandidateName(winningCandidateId);
     }  
 
     function getWinningCandidateVoteCounts() onlyAfterVotesTallied 
