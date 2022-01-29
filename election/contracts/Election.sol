@@ -43,9 +43,9 @@ contract Election {
     // );
 
     event VoterRegisteredEvent (address voterAddress); 
-    event CandidatesRegistrationStartedEvent ();
-    event CandidatesRegistrationEndedEvent ();
-    event CandidatesRegisteredEvent(uint candidateId);
+    event CandidateRegistrationStartedEvent ();
+    event CandidateRegistrationEndedEvent ();
+    event CandidateRegisteredEvent(uint candidateId);
     event VotingSessionStartedEvent ();
     event VotingSessionEndedEvent ();
     event VotedEvent (address voter, uint candidateId);
@@ -117,11 +117,11 @@ contract Election {
         emit VoterRegisteredEvent(_voterAddress);
     }
 
-    function startCandidatesRegistration() 
+    function startCandidatesRegistration ()
         public onlyAdministrator onlyDuringVotersRegistration {
-        workflowStatus = WorkflowStatus. CandidatesRegistrationStarted;
+        workflowStatus = WorkflowStatus.CandidatesRegistrationStarted;
             
-        emit CandidatesRegistrationStartedEvent();
+        emit CandidateRegistrationStartedEvent();
         emit WorkflowStatusChangeEvent(
             WorkflowStatus. RegisteringVoters, workflowStatus);
     }
@@ -130,9 +130,33 @@ contract Election {
         public onlyAdministrator onlyDuringCandidatesRegistration {
         workflowStatus = WorkflowStatus.CandidatesRegistrationEnded;
 
-        emit CandidatesRegistrationEndedEvent();        
+        emit CandidateRegistrationEndedEvent();        
         emit WorkflowStatusChangeEvent(
             WorkflowStatus.CandidatesRegistrationStarted, workflowStatus);
+    }
+    //     enum WorkflowStatus {
+    //     RegisteringVoters, 
+    //     CandidatesRegistrationStarted,
+    //     CandidatesRegistrationEnded,
+    //     VotingSessionStarted,
+    //     VotingSessionEnded,
+    //     VotesTallied
+    // }
+    function startVotingSession() 
+        public onlyAdministrator onlyAfterCandidatesRegistration {
+        workflowStatus = WorkflowStatus.VotingSessionStarted;
+
+        emit VotingSessionStartedEvent();        
+        emit WorkflowStatusChangeEvent(
+            WorkflowStatus.VotingSessionStarted, workflowStatus);
+    }
+        function endVotingSession() 
+        public onlyAdministrator onlyDuringVotingSession {
+        workflowStatus = WorkflowStatus.VotingSessionEnded;
+
+        emit VotingSessionEndedEvent();        
+        emit WorkflowStatusChangeEvent(
+            WorkflowStatus.VotingSessionEnded, workflowStatus);
     }
 
     function registerCandidate(string candidateName) 
@@ -140,7 +164,7 @@ contract Election {
         candidatesCount ++;
         candidates[candidatesCount] = (Candidate(candidatesCount, candidateName, 0));
 
-        emit CandidatesRegisteredEvent(candidatesCount);
+        emit CandidateRegisteredEvent(candidatesCount);
     }
 
 
