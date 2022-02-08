@@ -495,7 +495,7 @@ function loadCandidatesTable() {
 		var innerHtml = "<tr><td><b>Candidate Id</b></td><td><b>Description</b></td>";
 		
 		j = 0;
-		for (var i = 1; i <= candidatesNumber; i++) {
+		for (var i = 0; i < candidatesNumber; i++) {
 			getCandidateName(i)
 			.then(description => {
 				innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td></tr>";

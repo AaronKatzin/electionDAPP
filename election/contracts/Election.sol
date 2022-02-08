@@ -161,8 +161,8 @@ contract Election {
 
     function registerCandidate(string candidateName) 
         public onlyRegisteredVoter onlyDuringCandidatesRegistration {
-        candidatesCount ++;
         candidates[candidatesCount] = (Candidate(candidatesCount, candidateName, 0));
+        candidatesCount++;
 
         emit CandidateRegisteredEvent(candidatesCount);
     }
