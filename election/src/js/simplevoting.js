@@ -237,7 +237,7 @@ function registerVoter() {
 	
 	var adminAddress = $("#adminAddress").val();
 	var voterToRegister = $("#voterAddress").val();
-	
+
 	SimpleVoting.deployed()
 	.then(instance => instance.isAdministrator(adminAddress))
 	.then(isAdministrator =>  {		
@@ -357,6 +357,7 @@ function startVotingSession() {
 	$("#votingSessionMessage").html('');	
 	
 	var adminAddress = $("#adminAddress").val();
+	var votingDuration = $("#votingDuration").val();
 	
 	SimpleVoting.deployed()
 	.then(instance => instance.isAdministrator(adminAddress))
@@ -373,7 +374,7 @@ function startVotingSession() {
 					else
 					{
 						SimpleVoting.deployed()
-						   .then(instance => instance.startVotingSession({from:adminAddress, gas:200000}))
+						   .then(instance => instance.startVotingSession(votingDuration, {from:adminAddress, gas:200000}))
 						   .catch(e => $("#votingSessionMessage").html(e));
 					}
 				});

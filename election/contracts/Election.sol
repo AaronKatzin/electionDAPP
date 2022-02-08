@@ -37,6 +37,8 @@ contract Election {
     // Store Candidates Count
     uint public candidatesCount;
 
+    uint public timeVotingEnds;
+
     // // voted event
     // event votedEvent (
     //     uint indexed _candidateId
@@ -142,9 +144,11 @@ contract Election {
     //     VotingSessionEnded,
     //     VotesTallied
     // }
-    function startVotingSession() 
+    function startVotingSession(uint votingDuration) 
         public onlyAdministrator onlyAfterCandidatesRegistration {
         workflowStatus = WorkflowStatus.VotingSessionStarted;
+        timeVotingEnds = now + votingDuration;
+        
 
         emit VotingSessionStartedEvent();        
         emit WorkflowStatusChangeEvent(
@@ -175,7 +179,7 @@ contract Election {
 
     function vote(uint candidateId) public onlyRegisteredVoter onlyDuringVotingSession  {
         require(!voters[sha256(abi.encodePacked(msg.sender))].hasVoted, "the caller has already voted");
-            
+        require(timeVotingEnds > now, "Voting timer has run out");
         voters[sha256(abi.encodePacked(msg.sender))].hasVoted = true;
         voters[sha256(abi.encodePacked(msg.sender))].votedCandidateId = candidateId;
             
