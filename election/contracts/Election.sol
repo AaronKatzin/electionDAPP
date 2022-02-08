@@ -30,7 +30,7 @@ contract Election {
     uint private winningCandidateId;
 
     // Store accounts that have voted
-    mapping(address => Voter) public voters;
+    mapping(bytes32 => Voter) public voters;
     // Store Candidates
     // Fetch Candidate
     mapping(uint => Candidate) public candidates;
@@ -70,7 +70,7 @@ contract Election {
         _;
     }
     modifier onlyRegisteredVoter() {
-        require(voters[msg.sender].isRegistered, 
+        require(voters[sha256(abi.encodePacked(msg.sender))].isRegistered, 
         "the caller of this function must be a registered voter");
         _;
     }
@@ -109,10 +109,10 @@ contract Election {
     function registerVoter(address _voterAddress) 
         public onlyAdministrator onlyDuringVotersRegistration {
             
-        require(!voters[_voterAddress].isRegistered, "the voter is already registered");
+        require(!voters[sha256(abi.encodePacked(_voterAddress))].isRegistered, "the voter is already registered");
             
-        voters[_voterAddress].isRegistered = true;
-        voters[_voterAddress].hasVoted = false;
+        voters[sha256(abi.encodePacked(_voterAddress))].isRegistered = true;
+        voters[sha256(abi.encodePacked(_voterAddress))].hasVoted = false;
 
         emit VoterRegisteredEvent(_voterAddress);
     }
@@ -174,10 +174,10 @@ contract Election {
     // }
 
     function vote(uint candidateId) public onlyRegisteredVoter onlyDuringVotingSession  {
-        require(!voters[msg.sender].hasVoted, "the caller has already voted");
+        require(!voters[sha256(abi.encodePacked(msg.sender))].hasVoted, "the caller has already voted");
             
-        voters[msg.sender].hasVoted = true;
-        voters[msg.sender].votedCandidateId = candidateId;
+        voters[sha256(abi.encodePacked(msg.sender))].hasVoted = true;
+        voters[sha256(abi.encodePacked(msg.sender))].votedCandidateId = candidateId;
             
         candidates[candidateId].voteCount += 1;
 
@@ -255,7 +255,7 @@ contract Election {
 
     function isRegisteredVoter(address _voterAddress) public view
         returns (bool) {
-        return voters[_voterAddress].isRegistered;
+        return voters[sha256(abi.encodePacked(_voterAddress))].isRegistered;
     }
 
     function isAdministrator(address _address) public view 
