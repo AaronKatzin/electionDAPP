@@ -30,7 +30,7 @@ _ReSharper*/
 .vs/
 #Nuget packages folder
 packages/
-election/node_modules/
-election/bower_components/
-/election/build/contracts/
+/node_modules/
+/bower_components/
+/build/contracts/
 node_modules/
