@@ -118,7 +118,7 @@ window.onload = function() {
 			  if (!error)
 		      {
 			     $("#votingTallyingMessage").html('Votes have been tallied');
-			     loadResultsTable();
+			     loadTalliedCandidatesTable();
 		      }
 			  else
 				console.log(error);
@@ -451,6 +451,8 @@ function tallyVotes() {
 			$("#votingTallyingMessage").html('The given address does not correspond to the administrator');
 		}
 	});	
+
+	loadTalliedCandidatesTable();
 }
 
 function registerCandidate() {
@@ -505,6 +507,52 @@ function loadCandidatesTable() {
 			});
 		}
     });		
+}
+
+//Comparer Function for sort
+function GetSortOrder(prop) {    
+    return function(a, b) {    
+        if (a[prop] < b[prop]) {    
+            return 1;    
+        } else if (a[prop] > b[prop]) {    
+            return -1;    
+        }    
+        return 0;    
+    }    
+}   
+
+async function  loadTalliedCandidatesTable() {
+	
+	instance = await SimpleVoting.deployed();
+	candidatesNumber = await instance.getCandidatesNumber();
+	var candidates = [];
+	var struct;
+	var name;
+	var count;
+	for (var i = 0; i < candidatesNumber; i++) {
+		name = await getCandidateName(i);
+		count = await getCandidateVoteCounts(i);
+		struct = {"name": name, "votes": count.c[0]};
+		candidates.push(struct);
+	}
+
+	candidates.sort(GetSortOrder("votes")); //Pass the attribute to be sorted on
+
+	console.log("candidates array: ", candidates)
+		
+	var innerHtml = "<tr><td><b>Candidate Name</b></td><td><b>Votes</b></td>";
+
+	for (var i = 0; i < candidatesNumber; i++) {
+		innerHtml = innerHtml + "<tr><td>" + candidates[i].name + "</td><td>" + candidates[i].votes + "</td></tr>";
+		$("#resultsTable").html(innerHtml);
+	}
+	
+}
+
+function getCandidateVoteCounts(candidateId)
+{
+    return SimpleVoting.deployed()
+	  .then(instance => instance.getCandidateVoteCounts(candidateId));
 }
 
 function getCandidateName(candidateId)

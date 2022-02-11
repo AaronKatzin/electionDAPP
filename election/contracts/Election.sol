@@ -257,6 +257,12 @@ contract Election is VTToken {
             return getCandidateName(winningCandidateId);
     }  
 
+    function getCandidateVoteCounts(uint index) onlyAfterVotesTallied 
+        public view
+            returns (uint) {
+            return candidates[index].voteCount;
+    }
+
     function getWinningCandidateVoteCounts() onlyAfterVotesTallied 
         public view
             returns (uint) {
