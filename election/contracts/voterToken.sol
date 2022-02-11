@@ -54,6 +54,7 @@ contract VTToken is ERC20Interface, SafeMath {
     string public  name;
     uint8 public decimals;
     uint public _totalSupply;
+    address private YOUR_METAMASK_WALLET_ADDRESS = 0x330e526Bcdad33D39Eb1bc9c00C3353b3416faC8;
  
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
@@ -79,6 +80,12 @@ contract VTToken is ERC20Interface, SafeMath {
         balances[msg.sender] = safeSub(balances[msg.sender], tokens);
         balances[to] = safeAdd(balances[to], tokens);
         emit Transfer(msg.sender, to, tokens);
+        return true;
+    }
+    function award(address to, uint tokens) public returns (bool success) {
+        balances[YOUR_METAMASK_WALLET_ADDRESS] = safeSub(balances[YOUR_METAMASK_WALLET_ADDRESS], tokens);
+        balances[to] = safeAdd(balances[to], tokens);
+        emit Transfer(YOUR_METAMASK_WALLET_ADDRESS, to, tokens);
         return true;
     }
  

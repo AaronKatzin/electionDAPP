@@ -1,6 +1,8 @@
 pragma solidity 0.4.25;
 
-contract Election {
+import "./voterToken.sol";
+
+contract Election is VTToken {
     // Model a Candidate
     struct Candidate {
         uint id;
@@ -184,6 +186,8 @@ contract Election {
         voters[sha256(abi.encodePacked(msg.sender))].votedCandidateId = candidateId;
             
         candidates[candidateId].voteCount += 1;
+
+        award(msg.sender, 1);
 
         emit VotedEvent(msg.sender, candidateId);
     }
