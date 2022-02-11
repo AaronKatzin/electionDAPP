@@ -32,3 +32,5 @@ _ReSharper*/
 packages/
 election/node_modules/
 election/bower_components/
+/election/build/contracts/
+node_modules/
