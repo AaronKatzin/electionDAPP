@@ -496,7 +496,7 @@ function loadCandidatesTable() {
 	.then(instance => instance.getCandidatesNumber())
 	.then(candidatesNumber => {
 		
-		var innerHtml = "<tr><td><b>Candidate Id</b></td><td><b>Description</b></td>";
+		var innerHtml = "<tr><td><b>Candidate Id</b></td><td><b>Name</b></td>";
 		
 		j = 0;
 		for (var i = 0; i < candidatesNumber; i++) {
