@@ -39,6 +39,7 @@ contract Election is VTToken {
     // Store Candidates Count
     uint public candidatesCount;
 
+    uint public timeVotingBegins;
     uint public timeVotingEnds;
 
     // // voted event
@@ -146,12 +147,12 @@ contract Election is VTToken {
     //     VotingSessionEnded,
     //     VotesTallied
     // }
-    function startVotingSession(uint votingDuration) 
+    function startVotingSession(uint votingBeginsIn, uint votingDuration) 
         public onlyAdministrator onlyAfterCandidatesRegistration {
         workflowStatus = WorkflowStatus.VotingSessionStarted;
-        timeVotingEnds = now + votingDuration;
+        timeVotingBegins = now + votingBeginsIn;
+        timeVotingEnds = timeVotingBegins + votingDuration;
         
-
         emit VotingSessionStartedEvent();        
         emit WorkflowStatusChangeEvent(
             WorkflowStatus.VotingSessionStarted, workflowStatus);
@@ -181,6 +182,7 @@ contract Election is VTToken {
 
     function vote(uint candidateId) public onlyRegisteredVoter onlyDuringVotingSession  {
         require(!voters[sha256(abi.encodePacked(msg.sender))].hasVoted, "the caller has already voted");
+        require(timeVotingBegins < now, "Voting timer has't began yet, please wait "); //, timeVotingBegins - now
         require(timeVotingEnds > now, "Voting timer has run out");
         voters[sha256(abi.encodePacked(msg.sender))].hasVoted = true;
         voters[sha256(abi.encodePacked(msg.sender))].votedCandidateId = candidateId;

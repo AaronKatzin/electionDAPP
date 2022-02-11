@@ -358,6 +358,7 @@ function startVotingSession() {
 	
 	var adminAddress = $("#adminAddress").val();
 	var votingDuration = $("#votingDuration").val();
+	var votingBeginsIn = $("#votingBeginsIn").val();
 	
 	SimpleVoting.deployed()
 	.then(instance => instance.isAdministrator(adminAddress))
@@ -374,7 +375,7 @@ function startVotingSession() {
 					else
 					{
 						SimpleVoting.deployed()
-						   .then(instance => instance.startVotingSession(votingDuration, {from:adminAddress, gas:200000}))
+						   .then(instance => instance.startVotingSession(votingBeginsIn, votingDuration, {from:adminAddress, gas:200000}))
 						   .catch(e => $("#votingSessionMessage").html(e));
 					}
 				});
