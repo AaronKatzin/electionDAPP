@@ -461,6 +461,7 @@ function registerCandidate() {
 	
 	var voterAddress = $("#voterAddress").val();
 	var candidateDescription = $("#candidateDescription").val();
+	var candidateParty = $("#candidateParty").val();
 	
 	SimpleVoting.deployed()
 	.then(instance => instance.isRegisteredVoter(voterAddress))
@@ -477,7 +478,7 @@ function registerCandidate() {
 					else
 					{
 						SimpleVoting.deployed()
-						   .then(instance => instance.registerCandidate(candidateDescription, {from:voterAddress, gas:200000}))
+						   .then(instance => instance.registerCandidate(candidateDescription, candidateParty, {from:voterAddress, gas:200000}))
 						   .catch(e => $("#candidateRegistrationMessage").html(e));
 					}
 				});
@@ -490,23 +491,19 @@ function registerCandidate() {
 }
 
 
-function loadCandidatesTable() {
+async function loadCandidatesTable() {
 	
-	SimpleVoting.deployed()
-	.then(instance => instance.getCandidatesNumber())
-	.then(candidatesNumber => {
-		
-		var innerHtml = "<tr><td><b>Candidate Id</b></td><td><b>Name</b></td>";
+	instance = await SimpleVoting.deployed();
+	candidatesNumber = await instance.getCandidatesNumber();
+	var innerHtml = "<tr><td><b>ID</b></td><td><b>Name</b></td><td><b>Party</b></td>";
 		
 		j = 0;
 		for (var i = 0; i < candidatesNumber; i++) {
-			getCandidateName(i)
-			.then(description => {
-				innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td></tr>";
-				$("#candidatesTable").html(innerHtml);
-			});
+			description = await getCandidateName(i);
+			party = await getCandidateParty(i);
+			innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td><td>"+ party + "</td></tr>";
+			$("#candidatesTable").html(innerHtml);
 		}
-    });		
 }
 
 //Comparer Function for sort
@@ -529,10 +526,12 @@ async function  loadTalliedCandidatesTable() {
 	var struct;
 	var name;
 	var count;
+	var party;
 	for (var i = 0; i < candidatesNumber; i++) {
 		name = await getCandidateName(i);
 		count = await getCandidateVoteCounts(i);
-		struct = {"name": name, "votes": count.c[0]};
+		party =  await getCandidateParty(i);
+		struct = {"name": name, "votes": count.c[0], "party": party};
 		candidates.push(struct);
 	}
 
@@ -540,10 +539,10 @@ async function  loadTalliedCandidatesTable() {
 
 	console.log("candidates array: ", candidates)
 		
-	var innerHtml = "<tr><td><b>Candidate Name</b></td><td><b>Votes</b></td>";
+	var innerHtml = "<tr><td><b>Candidate Name</b></td><td><b>Party</b></td><td><b>Votes</b></td>";
 
 	for (var i = 0; i < candidatesNumber; i++) {
-		innerHtml = innerHtml + "<tr><td>" + candidates[i].name + "</td><td>" + candidates[i].votes + "</td></tr>";
+		innerHtml = innerHtml + "<tr><td>" + candidates[i].name + "</td><td>" + candidates[i].party + "</td><td>" + candidates[i].votes + "</td></tr>";
 		$("#resultsTable").html(innerHtml);
 	}
 	
@@ -559,6 +558,12 @@ function getCandidateName(candidateId)
 {
     return SimpleVoting.deployed()
 	  .then(instance => instance.getCandidateName(candidateId));
+}
+
+function getCandidateParty(candidateId)
+{
+    return SimpleVoting.deployed()
+	  .then(instance => instance.getCandidateParty(candidateId));
 }
 
 function vote() {

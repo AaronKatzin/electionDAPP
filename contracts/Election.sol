@@ -8,6 +8,7 @@ contract Election is VTToken {
         uint id;
         string name;
         uint voteCount;
+        string party;
     }
 
     struct Voter {
@@ -64,10 +65,6 @@ contract Election is VTToken {
     constructor () public {
         administrator = msg.sender;
         workflowStatus = WorkflowStatus.RegisteringVoters;
-
-        // TODO: remove these next two lines and have candidate registration done by admin
-        // addCandidate("Candidate 1");
-        // addCandidate("Candidate 2");
     }
 
     modifier onlyAdministrator(){
@@ -166,9 +163,9 @@ contract Election is VTToken {
             WorkflowStatus.VotingSessionEnded, workflowStatus);
     }
 
-    function registerCandidate(string candidateName) 
+    function registerCandidate(string candidateName, string party) 
         public onlyRegisteredVoter onlyDuringCandidatesRegistration {
-        candidates[candidatesCount] = (Candidate(candidatesCount, candidateName, 0));
+        candidates[candidatesCount] = (Candidate(candidatesCount, candidateName, 0, party));
         candidatesCount++;
 
         emit CandidateRegisteredEvent(candidatesCount);
@@ -243,6 +240,11 @@ contract Election is VTToken {
     function getCandidateName(uint index) public view 
         returns (string) {
             return candidates[index].name;
+    }
+
+    function getCandidateParty(uint index) public view 
+        returns (string) {
+            return candidates[index].party;
     }
 
     function getWinningCandidateId() onlyAfterVotesTallied 
