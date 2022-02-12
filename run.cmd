@@ -1,0 +1,1 @@
+truffle migrate --reset & explorer "http://localhost:8080/index.html" & node src\js\webserver.js
