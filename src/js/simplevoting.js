@@ -154,10 +154,8 @@ function loadCandidateSelector(){
 	
 	getCandidateNamesArray()
 	.then(candidateNames => {
-		//console.log("candidateNames: ", candidateNames);
 		let options = candidateNames.map(candidate => `<option value=${candidate}>${candidate}</option>`).join('\n');
 		options = "<option value=\"\" disabled selected>Choose a candidate</option>\n" + options;
-		//console.log("options: ", options);
 		select.innerHTML = options;
 		
 
@@ -571,7 +569,6 @@ async function  loadTalliedCandidatesTable() {
 
 	candidates.sort(GetSortOrder("votes")); //Pass the attribute to be sorted on
 
-	console.log("candidates array: ", candidates)
 		
 	var innerHtml = "<tr><td><b>Candidate Name</b></td><td><b>Party</b></td><td><b>Votes</b></td>";
 
@@ -690,19 +687,3 @@ function loadResultsTable() {
 			}
 		});
 }
-// window.onload=function(){
-// 		
-// 	let btnPopulate = document.querySelector('button');
-// 	let select = document.querySelector('select');
-// 
-// 	let fruits  = ['Banana', 'Grapes', 'Kiwi', 'Mango', 'Orange'];
-// 	console.log("fruits: ", fruits);
-// 	let options = fruits.map(fruit => `<option value=${fruit.toLowerCase()}>${fruit}</option>`).join('\n');
-// 	select.innerHTML = options;
-// 		
-// 	btnPopulate.addEventListener('click', () =>{
-// 		let options = fruits.map(fruit => `<option value=${fruit.toLowerCase()}>${fruit}</option>`).join('\n');
-// 		console.log("options: ", options);
-// 		select.innerHTML = options;
-// 	});
-// }

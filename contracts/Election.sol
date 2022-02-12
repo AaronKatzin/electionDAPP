@@ -43,11 +43,6 @@ contract Election is VTToken {
     uint public timeVotingBegins;
     uint public timeVotingEnds;
 
-    // // voted event
-    // event votedEvent (
-    //     uint indexed _candidateId
-    // );
-
     event VoterRegisteredEvent (address voterAddress); 
     event CandidateRegistrationStartedEvent ();
     event CandidateRegistrationEndedEvent ();
@@ -139,14 +134,7 @@ contract Election is VTToken {
         emit WorkflowStatusChangeEvent(
             WorkflowStatus.CandidatesRegistrationStarted, workflowStatus);
     }
-    //     enum WorkflowStatus {
-    //     RegisteringVoters, 
-    //     CandidatesRegistrationStarted,
-    //     CandidatesRegistrationEnded,
-    //     VotingSessionStarted,
-    //     VotingSessionEnded,
-    //     VotesTallied
-    // }
+    
     function startVotingSession(uint votingBeginsIn, uint votingDuration) 
         public onlyAdministrator onlyAfterCandidatesRegistration {
         workflowStatus = WorkflowStatus.VotingSessionStarted;
@@ -175,11 +163,6 @@ contract Election is VTToken {
     }
 
 
-    // function addCandidate (string _name) private {
-    //     candidatesCount ++;
-    //     candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
-    // }
-
     function vote(uint candidateId) public onlyRegisteredVoter onlyDuringVotingSession  {
         require(!voters[sha256(abi.encodePacked(msg.sender))].hasVoted, "the caller has already voted");
         require(timeVotingBegins < now, "Voting timer has't began yet, please wait "); //, timeVotingBegins - now
@@ -195,22 +178,6 @@ contract Election is VTToken {
     }
 
 
-//     function vote (uint _candidateId) public {
-//         // require that they haven't voted before
-//         require(!voters[msg.sender]);
-// 
-//         // require a valid candidate
-//         require(_candidateId > 0 && _candidateId <= candidatesCount);
-// 
-//         // record that voter has voted
-//         voters[msg.sender] = true;
-// 
-//         // update candidate vote Count
-//         candidates[_candidateId].voteCount ++;
-// 
-//         // trigger voted event
-//         emit votedEvent(_candidateId);
-//     }
     function tallyVotes() 
         onlyAdministrator 
         onlyAfterVotingSession  public {
