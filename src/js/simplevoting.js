@@ -534,7 +534,7 @@ async function getCandidateNamesArray() {
 		for (var i = 0; i < candidatesNumber; i++) {
 			description = await getCandidateName(i);
 			party = await getCandidateParty(i);
-			candidates.push(description);
+			candidates.push(description + " (" + party + ")");
 			//candidates.push({"Name": description, "party": party});
 		}
 	return candidates;
