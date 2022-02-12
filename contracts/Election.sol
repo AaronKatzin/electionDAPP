@@ -241,6 +241,16 @@ contract Election is VTToken {
         returns (string) {
             return candidates[index].name;
     }
+    function getCandidateID(string name) public view 
+        returns (uint) {
+            for (uint i = 0; i < candidatesCount; i++) {
+                
+                if (keccak256(abi.encodePacked(candidates[i].name)) == keccak256(abi.encodePacked(name))) {
+                    return i;
+                }
+        }
+            return 99;
+    }
 
     function getCandidateParty(uint index) public view 
         returns (string) {

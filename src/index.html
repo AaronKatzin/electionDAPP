@@ -148,7 +148,19 @@
 			background-color: #555555;
 			color: white;
 		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: left;
+			justify-content: space-between;
+		}
+
+		select {
+			width: 120px;
+		}
 	</style>
+	<title>Vote</title>
 </head>
 
 <body>
@@ -173,17 +185,17 @@
 				<br />
 				<tr>
 					<table border="0" cellpadding="0" id='user'>
-							<td><b>Voter address:</b></td>
-							<td><input type="text" id="voterAddress" width="400" /></td>
-						</tr>
-						<tr>
-							<td><b>password:</b></td>
-							<td><input type="text" id="voterPassword" width="400" /></td>
-						</tr>
-						<tr>
-							<td><button onclick="unlockVoter()" class="button button5">Unlock account</button></td>
-							<td id='voterMessage'></td>
-						</tr>
+						<td><b>Voter address:</b></td>
+						<td><input type="text" id="voterAddress" width="400" /></td>
+				</tr>
+				<tr>
+					<td><b>password:</b></td>
+					<td><input type="text" id="voterPassword" width="400" /></td>
+				</tr>
+				<tr>
+					<td><button onclick="unlockVoter()" class="button button5">Unlock account</button></td>
+					<td id='voterMessage'></td>
+				</tr>
 				</tr>
 
 				<tr height=50px></tr>
@@ -202,21 +214,22 @@
 				</tr>
 				</tr>
 				<tr height=50px></tr>
-				<tr>
-					<td><b>Candidate Id:</b></td>
-					<td><input type="text" id="candidateId" width="400" /></td>
-				</tr>
-				<tr>
-					<td><button onclick="vote()" class="button button5">Vote</button></td>
-					<td id='voteConfirmationMessage'></td>
-				</tr>
 				</table>
 				</tr>
 				<br />
-
+				
+				<table>
+					<div class="container">
+						<select class="button5" style="width:150px;" id="candidateSelectName"></select>	
+					</div>
+					<tr>
+						<td><button onclick="vote()" class="button button5">Vote</button></td>
+						<td id='voteConfirmationMessage'></td>
+					</tr>
+				</table>
 			</div>
 			<div class="column">
-				
+
 				<tr>
 					<b>
 						<caption>Registered Candidates:</caption>
@@ -231,9 +244,9 @@
 				</tr>
 				<tr />
 				<br />
-	</td>
-	</div>
-	</div>
+				</td>
+			</div>
+		</div>
 	</p>
 </body>
 

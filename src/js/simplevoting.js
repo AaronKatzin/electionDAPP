@@ -64,6 +64,7 @@ window.onload = function() {
 			  {
 				$("#candidateRegistrationMessage").html('The candidate has been registered successfully');
 				loadCandidatesTable();
+				loadCandidateSelector();
 			  }
 			  else
 				console.log(error);
@@ -137,11 +138,31 @@ window.onload = function() {
 				console.log(error);
 		    });			  
 	    });		
-	   
-	    refreshWorkflowStatus();
-	});
+
+
+	loadCandidateSelector();
+	loadCandidatesTable();
+	loadResultsTable();
+	refreshWorkflowStatus();
+});
 }
 
+
+function loadCandidateSelector(){
+	let btnPopulate = document.querySelector('button');
+	let select = document.querySelector('select');
+	
+	getCandidateNamesArray()
+	.then(candidateNames => {
+		//console.log("candidateNames: ", candidateNames);
+		let options = candidateNames.map(candidate => `<option value=${candidate}>${candidate}</option>`).join('\n');
+		options = "<option value=\"\" disabled selected>Choose a candidate</option>\n" + options;
+		//console.log("options: ", options);
+		select.innerHTML = options;
+		
+
+	});
+}
 function refreshWorkflowStatus()
 {		
 	SimpleVoting.deployed()
@@ -505,6 +526,19 @@ async function loadCandidatesTable() {
 			$("#candidatesTable").html(innerHtml);
 		}
 }
+async function getCandidateNamesArray() {
+	
+	instance = await SimpleVoting.deployed();
+	candidatesNumber = await instance.getCandidatesNumber();
+	let candidates = [];
+		for (var i = 0; i < candidatesNumber; i++) {
+			description = await getCandidateName(i);
+			party = await getCandidateParty(i);
+			candidates.push(description);
+			//candidates.push({"Name": description, "party": party});
+		}
+	return candidates;
+}
 
 //Comparer Function for sort
 function GetSortOrder(prop) {    
@@ -560,6 +594,12 @@ function getCandidateName(candidateId)
 	  .then(instance => instance.getCandidateName(candidateId));
 }
 
+function getCandidateID(candidateName)
+{
+    return SimpleVoting.deployed()
+	  .then(instance => instance.getCandidateID(candidateName));
+}
+
 function getCandidateParty(candidateId)
 {
     return SimpleVoting.deployed()
@@ -567,11 +607,15 @@ function getCandidateParty(candidateId)
 }
 
 function vote() {
-	$("#voteConfirmationMessage").html('');
 	
 	var voterAddress = $("#voterAddress").val();
 	var candidateId = $("#candidateId").val();
-	
+	var candidateName = $("#candidateSelectName").val();
+	candidateId = getCandidateID(candidateName);
+
+	getCandidateID(candidateName).then(candidateId =>{
+		candidateId = candidateId.c[0];
+		$("#voteConfirmationMessage").html("Voting for: " + candidateName);
 	SimpleVoting.deployed()
 	.then(instance => instance.isRegisteredVoter(voterAddress))
 	.then(isRegisteredVoter =>  {		
@@ -598,8 +642,8 @@ function vote() {
 									$("#voteConfirmationMessage").html('The specified candidateId does not exist.');
 								}							
 								else 
-								{
-									SimpleVoting.deployed()
+								{	
+										SimpleVoting.deployed()
 									   .then(instance => instance.vote(candidateId, {from:voterAddress, gas:200000}))
 									   .catch(e => $("#voteConfirmationMessage").html(e));
 								}
@@ -611,7 +655,8 @@ function vote() {
 		{
 			$("#candidateRegistrationMessage").html('You are not a registered voter. You cannot register a candidate.');
 		}
-	});					
+	});			
+});				
 }
 
 function loadResultsTable() {
@@ -645,3 +690,19 @@ function loadResultsTable() {
 			}
 		});
 }
+// window.onload=function(){
+// 		
+// 	let btnPopulate = document.querySelector('button');
+// 	let select = document.querySelector('select');
+// 
+// 	let fruits  = ['Banana', 'Grapes', 'Kiwi', 'Mango', 'Orange'];
+// 	console.log("fruits: ", fruits);
+// 	let options = fruits.map(fruit => `<option value=${fruit.toLowerCase()}>${fruit}</option>`).join('\n');
+// 	select.innerHTML = options;
+// 		
+// 	btnPopulate.addEventListener('click', () =>{
+// 		let options = fruits.map(fruit => `<option value=${fruit.toLowerCase()}>${fruit}</option>`).join('\n');
+// 		console.log("options: ", options);
+// 		select.innerHTML = options;
+// 	});
+// }
