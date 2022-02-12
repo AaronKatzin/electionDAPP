@@ -247,7 +247,7 @@ function unlockVoter()
 	})//unlock for 3 minutes
 	//var result = web3.eth.personal.unlockAccount(voterAddress, voterPassword, 180);//unlock for 3 minutes
 	if (result)
-		$("#voterMessage").html('The account has been unlocked result: '+ result);
+		$("#voterMessage").html('The account has been unlocked');
 	else
 		$("#voterMessage").html('The account has NOT been unlocked');
 }
