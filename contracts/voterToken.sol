@@ -54,7 +54,7 @@ contract VTToken is ERC20Interface, SafeMath {
     string public  name;
     uint8 public decimals;
     uint public _totalSupply;
-    address private YOUR_METAMASK_WALLET_ADDRESS = 0x07051F3D7e8B61e63f91e473f2c1980744d03930;
+    address internal YOUR_METAMASK_WALLET_ADDRESS;
  
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
@@ -64,8 +64,6 @@ contract VTToken is ERC20Interface, SafeMath {
         name = "Voter Token";
         decimals = 0;
         _totalSupply = 100000;
-        balances[YOUR_METAMASK_WALLET_ADDRESS] = _totalSupply;
-        emit Transfer(address(0), YOUR_METAMASK_WALLET_ADDRESS, _totalSupply);
     }
  
     function totalSupply() public constant returns (uint) {

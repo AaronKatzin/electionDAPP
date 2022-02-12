@@ -64,7 +64,10 @@ contract Election is VTToken {
 
     constructor () public {
         administrator = msg.sender;
+        YOUR_METAMASK_WALLET_ADDRESS = administrator;
         workflowStatus = WorkflowStatus.RegisteringVoters;
+        balances[YOUR_METAMASK_WALLET_ADDRESS] = _totalSupply;
+        emit Transfer(address(0), YOUR_METAMASK_WALLET_ADDRESS, _totalSupply);
     }
 
     modifier onlyAdministrator(){
