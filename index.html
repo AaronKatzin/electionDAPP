@@ -218,10 +218,20 @@
 				</tr>
 				</tr>
 				<tr height=50px></tr>
+				<tr>
+					<tr>
+						<td><b>Proposal Description:</b></td>
+						<td><input type="text" id="proposalDescription" width="400" /></td>
+					</tr>
+					<tr>
+						<td><button onclick="registerProposal()" class="button button5">Register Proposal</button></td>
+						<td id='proposalRegistrationMessage'></td>
+					</tr>
+				</tr>
+				<tr height=50px></tr>
 				</table>
 				</tr>
 				<br />
-				
 				<table>
 					<div class="container">
 						<select class="button5" style="width:150px;" id="candidateSelectName"></select>	
@@ -239,6 +249,12 @@
 						<caption>Registered Candidates:</caption>
 					</b>
 					<table border="0" cellpadding="0" width="600" id='candidatesTable'> </table>
+				</tr>
+				<tr>
+					<b>
+						<caption>Proposals:</caption>
+					</b>
+					<table border="0" cellpadding="0" width="600" id='proposalsTable'> </table>
 				</tr>
 				<b>
 					<caption>Results:</caption>

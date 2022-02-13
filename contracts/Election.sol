@@ -3,12 +3,17 @@ pragma solidity 0.4.25;
 import "./voterToken.sol";
 
 contract Election is VTToken {
-    // Model a Candidate
     struct Candidate {
         uint id;
         string name;
         uint voteCount;
         string party;
+    }
+
+    struct Proposal {
+        uint id;
+        string description;
+        uint voteCount;
     }
 
     struct Voter {
@@ -32,13 +37,14 @@ contract Election is VTToken {
 
     uint private winningCandidateId;
 
-    // Store accounts that have voted
+
     mapping(bytes32 => Voter) public voters;
-    // Store Candidates
-    // Fetch Candidate
     mapping(uint => Candidate) public candidates;
-    // Store Candidates Count
+    mapping(uint => Proposal) public proposals;
+    mapping(uint => bool) public proposalResults;
+
     uint public candidatesCount;
+    uint public proposalsCount;
 
     uint public timeVotingBegins;
     uint public timeVotingEnds;
@@ -47,6 +53,7 @@ contract Election is VTToken {
     event CandidateRegistrationStartedEvent ();
     event CandidateRegistrationEndedEvent ();
     event CandidateRegisteredEvent(uint candidateId);
+    event ProposalRegisteredEvent(uint proposalId);
     event VotingSessionStartedEvent ();
     event VotingSessionEndedEvent ();
     event VotedEvent (address voter, uint candidateId);
@@ -162,18 +169,34 @@ contract Election is VTToken {
         emit CandidateRegisteredEvent(candidatesCount);
     }
 
+    function registerProposal(string description) 
+        public onlyRegisteredVoter onlyDuringCandidatesRegistration {
+        proposals[proposalsCount] = (Proposal(candidatesCount, description, 0));
+        proposalsCount++;
 
-    function vote(uint candidateId) public onlyRegisteredVoter onlyDuringVotingSession  {
+        emit ProposalRegisteredEvent(proposalsCount);
+    }
+
+
+
+    function vote(uint candidateId, bool[] proposalVotes) public onlyRegisteredVoter onlyDuringVotingSession  {
         require(!voters[sha256(abi.encodePacked(msg.sender))].hasVoted, "the caller has already voted");
         require(timeVotingBegins < now, "Voting timer has't began yet, please wait "); //, timeVotingBegins - now
         require(timeVotingEnds > now, "Voting timer has run out");
         voters[sha256(abi.encodePacked(msg.sender))].hasVoted = true;
+
+        // vote for candidate
         voters[sha256(abi.encodePacked(msg.sender))].votedCandidateId = candidateId;
-            
         candidates[candidateId].voteCount += 1;
 
-        award(msg.sender, 1);
+        // vote for proposals
+        for(uint i=0; i < proposalsCount; i++){
+            if(proposalVotes[i]){
+                proposals[i].voteCount += 1;
+            }
+        }
 
+        award(msg.sender, 1);
         emit VotedEvent(msg.sender, candidateId);
     }
 
@@ -181,10 +204,11 @@ contract Election is VTToken {
     function tallyVotes() 
         onlyAdministrator 
         onlyAfterVotingSession  public {
+
+        // tally candidate results
         uint winningVoteCount = 0;
         uint winningCandidateIndex = 0;
-
-            
+           
         for (uint i = 0; i < candidatesCount; i++) {
             if (candidates[i].voteCount > winningVoteCount) {
                 winningVoteCount = candidates[i].voteCount;
@@ -194,6 +218,11 @@ contract Election is VTToken {
             
         winningCandidateId = winningCandidateIndex;
         workflowStatus = WorkflowStatus.VotesTallied;
+
+        // tally proposal results
+        for(i=0; i < proposalsCount; i++){
+            proposalResults[i] = (proposals[i].voteCount > (proposalsCount / 2));
+        }
 
         emit VotesTalliedEvent();
         emit WorkflowStatusChangeEvent(
@@ -264,5 +293,33 @@ contract Election is VTToken {
     function getWorkflowStatus() public view
     returns (WorkflowStatus) {
     return workflowStatus;       
+    }
+
+    // proposal views
+    function getProposalsNumber() public view
+        returns (uint) {
+            return proposalsCount;
+    }
+
+    function getProposalDescription(uint index) public view 
+        returns (string) {
+            return proposals[index].description;
+    }
+
+    function getProposalID(string description) public view 
+        returns (uint) {
+            for (uint i = 0; i < proposalsCount; i++) {
+                
+                if (keccak256(abi.encodePacked(proposals[i].description)) == keccak256(abi.encodePacked(description))) {
+                    return i;
+                }
+        }
+            return 99;
+    }
+
+    function getProposalVoteCounts(uint index) onlyAfterVotesTallied 
+        public view
+            returns (uint) {
+            return proposals[index].voteCount;
     }
 }

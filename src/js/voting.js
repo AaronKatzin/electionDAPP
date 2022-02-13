@@ -70,6 +70,21 @@ window.onload = function() {
 				console.log(error);
 		    });			  
 	    });	
+		SimpleVoting.deployed()
+		.then(instance => instance.ProposalRegisteredEvent())
+		.then(candidateRegisteredEventSubscription => {
+		    candidateRegisteredEvent = candidateRegisteredEventSubscription;	
+
+		    candidateRegisteredEvent.watch(function(error, result) {
+			  if (!error)
+			  {
+				$("#proposalRegistrationMessage").html('The proposal has been registered successfully');
+				loadProposalsTable();
+			  }
+			  else
+				console.log(error);
+		    });			  
+	    });	
 
 		SimpleVoting.deployed()
 		.then(instance => instance.VotingSessionStartedEvent())
@@ -510,6 +525,40 @@ function registerCandidate() {
 }
 
 
+function registerProposal() {
+	$("#proposalRegistrationMessage").html('');
+	
+	var voterAddress = $("#voterAddress").val();
+	var proposalDescription = $("#proposalDescription").val();
+	
+	SimpleVoting.deployed()
+	.then(instance => instance.isRegisteredVoter(voterAddress))
+	.then(isRegisteredVoter =>  {		
+		if (isRegisteredVoter)
+		{
+			return SimpleVoting.deployed()
+				.then(instance => instance.getWorkflowStatus())
+				.then(workflowStatus => {
+					if (workflowStatus < 1)
+						$("#proposalRegistrationMessage").html('The proposal registration session has not started yet');
+					else if (workflowStatus > 1)
+						$("#proposalRegistrationMessage").html('The proposal registration session has already ended');				    
+					else
+					{	
+						SimpleVoting.deployed()
+						   .then(instance => instance.registerProposal(proposalDescription, {from:voterAddress, gas:200000}))
+						   .catch(e => $("#proposalRegistrationMessage").html(e));
+					}
+					
+				});
+		}
+		else
+		{
+			$("#proposalRegistrationMessage").html('You are not a registered voter. You cannot register a proposal.');
+		}
+	});			
+}
+
 async function loadCandidatesTable() {
 	
 	instance = await SimpleVoting.deployed();
@@ -524,6 +573,20 @@ async function loadCandidatesTable() {
 			$("#candidatesTable").html(innerHtml);
 		}
 }
+async function loadProposalsTable() {
+	
+	instance = await SimpleVoting.deployed();
+	proposalsNumber = await instance.getProposalsNumber();
+	var innerHtml = "<tr><td><b>ID</b></td><td><b>Description</b></td><td><b>Vote</b></td>";
+		
+		j = 0;
+		for (var i = 0; i < proposalsNumber; i++) {
+			description = await getProposalDescription(i);
+			innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td><td><input type=\"radio\" name=\"radio"+i+"\" value='True'>Yay</input><input type=\"radio\" name=\"radio"+i+"\" value='False' checked>Nay</input></td></tr>";
+			$("#proposalsTable").html(innerHtml);
+		}
+}
+
 async function getCandidateNamesArray() {
 	
 	instance = await SimpleVoting.deployed();
@@ -590,7 +653,17 @@ function getCandidateName(candidateId)
     return SimpleVoting.deployed()
 	  .then(instance => instance.getCandidateName(candidateId));
 }
+function getProposalDescription(candidateId)
+{
+    return SimpleVoting.deployed()
+	  .then(instance => instance.getProposalDescription(candidateId));
+}
 
+function getProposalsNumber()
+{
+    return SimpleVoting.deployed()
+	  .then(instance => instance.getProposalsNumber());
+}
 function getCandidateID(candidateName)
 {
     return SimpleVoting.deployed()
@@ -606,9 +679,16 @@ function getCandidateParty(candidateId)
 function vote() {
 	
 	var voterAddress = $("#voterAddress").val();
-	var candidateId = $("#candidateId").val();
 	var candidateName = $("#candidateSelectName").val();
 	candidateId = getCandidateID(candidateName);
+	var proposalResults = [];
+
+	getProposalsNumber().then(proposalsNumber =>{
+		var proposalResults = new Array(proposalsNumber).fill(false);
+		for(var i = 0; i < proposalsNumber; i++){
+			proposalResults.push($("#radio"+i).val() == "True");
+		}
+	});
 
 	getCandidateID(candidateName).then(candidateId =>{
 		candidateId = candidateId.c[0];
@@ -641,7 +721,7 @@ function vote() {
 								else 
 								{	
 										SimpleVoting.deployed()
-									   .then(instance => instance.vote(candidateId, {from:voterAddress, gas:200000}))
+									   .then(instance => instance.vote(candidateId, proposalResults, {from:voterAddress, gas:200000}))
 									   .catch(e => $("#voteConfirmationMessage").html(e));
 								}
 							});
