@@ -41,10 +41,11 @@ contract Election is VTToken {
     mapping(bytes32 => Voter) public voters;
     mapping(uint => Candidate) public candidates;
     mapping(uint => Proposal) public proposals;
-    mapping(uint => bool) public proposalResults;
+    bool[] public proposalResults;
 
     uint public candidatesCount;
     uint public proposalsCount;
+    uint public votersCount;
 
     uint public timeVotingBegins;
     uint public timeVotingEnds;
@@ -120,7 +121,7 @@ contract Election is VTToken {
             
         voters[sha256(abi.encodePacked(_voterAddress))].isRegistered = true;
         voters[sha256(abi.encodePacked(_voterAddress))].hasVoted = false;
-
+        votersCount += 1;
         emit VoterRegisteredEvent(_voterAddress);
     }
 
@@ -221,7 +222,7 @@ contract Election is VTToken {
 
         // tally proposal results
         for(i=0; i < proposalsCount; i++){
-            proposalResults[i] = (proposals[i].voteCount > (proposalsCount / 2));
+            proposalResults.push(proposals[i].voteCount > (votersCount / 2));
         }
 
         emit VotesTalliedEvent();
@@ -230,6 +231,10 @@ contract Election is VTToken {
     }
 
     // views
+    function getProposalResults() public view
+        returns (bool[]) {
+            return proposalResults;
+    }
 
     function getCandidatesNumber() public view
         returns (uint) {

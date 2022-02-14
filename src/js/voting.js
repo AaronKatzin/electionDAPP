@@ -677,6 +677,12 @@ function getCandidateParty(candidateId)
 	  .then(instance => instance.getCandidateParty(candidateId));
 }
 
+function getProposalResults()
+{
+    return SimpleVoting.deployed()
+	  .then(instance => instance.getProposalResults());
+}
+
 async function getProposalVotes(){
 	instance = await SimpleVoting.deployed();
 	proposalsNumber = await instance.getProposalsNumber();
