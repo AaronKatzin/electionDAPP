@@ -231,7 +231,8 @@ contract Election is VTToken {
     }
 
     // views
-    function getProposalResults() public view
+    function getProposalResults() 
+        public view
         returns (bool[]) {
             return proposalResults;
     }

@@ -114,34 +114,64 @@
 			color: white;
 		}
 
-		#resultsTable {
+		#candidatesResultsTable {
 			font-family: Arial, Helvetica, sans-serif;
 			border-collapse: collapse;
 			width: 50%;
 		}
 
-		#resultsTable td,
-		#resultsTable th {
+		#candidatesResultsTable td,
+		#candidatesResultsTable th {
 			border: 1px solid #ddd;
 			padding: 8px;
 			border: none;
 		}
 
-		#resultsTable tr:nth-child(even) {
+		#candidatesResultsTable tr:nth-child(even) {
 			background-color: #f2f2f2;
 		}
 
-		#resultsTable tr:hover {
+		#candidatesResultsTable tr:hover {
 			background-color: #ddd;
 		}
 
-		#resultsTable th {
+		#candidatesResultsTable th {
 			padding-top: 12px;
 			padding-bottom: 12px;
 			text-align: left;
 			background-color: #04AA6D;
 			color: white;
 		}
+
+		#proposalsResultsTable {
+			font-family: Arial, Helvetica, sans-serif;
+			border-collapse: collapse;
+			width: 50%;
+		}
+
+		#proposalsResultsTable td,
+		#proposalsResultsTable th {
+			border: 1px solid #ddd;
+			padding: 8px;
+			border: none;
+		}
+
+		#proposalsResultsTable tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+
+		#proposalsResultsTable tr:hover {
+			background-color: #ddd;
+		}
+
+		#proposalsResultsTable th {
+			padding-top: 12px;
+			padding-bottom: 12px;
+			text-align: left;
+			background-color: #04AA6D;
+			color: white;
+		}
+
 
 		.button {
 			background-color: #555555;
@@ -288,7 +318,10 @@
 					<caption>Results:</caption>
 				</b>
 				<tr>
-					<table border="0" cellpadding="0" width="200" id='resultsTable'></table>
+					<table border="0" cellpadding="0" width="200" id='candidatesResultsTable'></table>
+				</tr>
+				<tr>
+					<table border="0" cellpadding="0" width="200" id='proposalsResultsTable'></table>
 				</tr>
 				<tr />
 				<br />

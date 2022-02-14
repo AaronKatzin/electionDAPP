@@ -135,6 +135,7 @@ window.onload = function() {
 		      {
 			     $("#votingTallyingMessage").html('Votes have been tallied');
 			     loadTalliedCandidatesTable();
+				 loadTalliedProposalsTable();
 		      }
 			  else
 				console.log(error);
@@ -488,6 +489,7 @@ function tallyVotes() {
 	});	
 
 	loadTalliedCandidatesTable();
+	loadTalliedProposalsTable();
 }
 
 function registerCandidate() {
@@ -638,7 +640,37 @@ async function  loadTalliedCandidatesTable() {
 
 	for (var i = 0; i < candidatesNumber; i++) {
 		innerHtml = innerHtml + "<tr><td>" + candidates[i].name + "</td><td>" + candidates[i].party + "</td><td>" + candidates[i].votes + "</td></tr>";
-		$("#resultsTable").html(innerHtml);
+		$("#candidatesResultsTable").html(innerHtml);
+	}
+	
+}
+
+async function  loadTalliedProposalsTable() {
+	
+	instance = await SimpleVoting.deployed();
+	proposalsNumber = await instance.getProposalsNumber();
+	proposalResults = await getProposalResults();
+	var proposals = [];
+	var struct;
+	var description;
+	var result;
+	for (var i = 0; i < proposalsNumber; i++) {
+		description = await getProposalDescription(i);
+		result = proposalResults[i];
+		struct = {"description": description, "result": result};
+		proposals.push(struct);
+	}
+		
+	var innerHtml = "<tr><td><b>Proposal</b></td><td><b>Verdict</b></td>";
+
+	for (var i = 0; i < proposalsNumber; i++) {
+		if(proposals[i].result){
+			result = "Pass"
+		} else {
+			result = "Reject"
+		}
+		innerHtml = innerHtml + "<tr><td>" + proposals[i].description + "</td><td>" + 	result + "</td>";
+		$("#proposalsResultsTable").html(innerHtml);
 	}
 	
 }
@@ -654,10 +686,10 @@ function getCandidateName(candidateId)
     return SimpleVoting.deployed()
 	  .then(instance => instance.getCandidateName(candidateId));
 }
-function getProposalDescription(candidateId)
+function getProposalDescription(proposalId)
 {
     return SimpleVoting.deployed()
-	  .then(instance => instance.getProposalDescription(candidateId));
+	  .then(instance => instance.getProposalDescription(proposalId));
 }
 
 function getProposalsNumber()
@@ -784,7 +816,7 @@ function loadResultsTable() {
 					       .then(winningCandidateVoteCounts => {
 						           innerHtml = innerHtml +  "<tr><td><b>Votes count:</b></td><td>" + winningCandidateVoteCounts  +"</td></tr>";
 								   
-								   $("#resultsTable").html(innerHtml);
+								   $("#candidatesResultsTable").html(innerHtml);
 						   });
 					   });
 				   });
