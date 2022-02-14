@@ -190,7 +190,7 @@ contract Election is VTToken {
         candidates[candidateId].voteCount += 1;
 
         // vote for proposals
-        for(uint i=0; i < proposalsCount; i++){
+        for(uint i=1; i < proposalsCount; i++){
             if(proposalVotes[i]){
                 proposals[i].voteCount += 1;
             }

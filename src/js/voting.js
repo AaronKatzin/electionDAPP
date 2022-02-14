@@ -158,6 +158,7 @@ window.onload = function() {
 	loadCandidateSelector();
 	loadCandidatesTable();
 	loadResultsTable();
+	loadProposalsTable();
 	refreshWorkflowStatus();
 });
 }
@@ -582,7 +583,7 @@ async function loadProposalsTable() {
 		j = 0;
 		for (var i = 0; i < proposalsNumber; i++) {
 			description = await getProposalDescription(i);
-			innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td><td><input type=\"radio\" name=\"radio"+i+"\" value='True'>Yay</input><input type=\"radio\" name=\"radio"+i+"\" value='False' checked>Nay</input></td></tr>";
+			innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td><td><input type=\"radio\" name=\"radio"+i+"\" id=\"radio"+i+"\" value='True'>Yay</input><input type=\"radio\" name=\"radio"+i+"\" id=\"radio"+i+"\" value='False' checked>Nay</input></td></tr>";
 			$("#proposalsTable").html(innerHtml);
 		}
 }
@@ -676,19 +677,35 @@ function getCandidateParty(candidateId)
 	  .then(instance => instance.getCandidateParty(candidateId));
 }
 
-function vote() {
+async function getProposalVotes(){
+	instance = await SimpleVoting.deployed();
+	proposalsNumber = await instance.getProposalsNumber();
+	proposalsNumber = proposalsNumber.c[0];
+	//instance.getProposalsNumber().then(proposalsNumber =>{
+		var proposalResults = new Array(proposalsNumber).fill(false);
+		for(var i = 0; i < proposalsNumber; i++){
+			proposalResults[i] = document.getElementById("radio"+i).checked;//document.getElementById("#radio"+i).checked;//$("#radio"+i).val(); // == "True"); 
+			
+		//console.log("$(\"#radio\"+i).val(): "+($("#radio1".val())))
+		}
+		console.log("proposalResults: "+proposalResults)
+		return proposalResults;
+	//});
+}
+
+async function vote() {
 	
 	var voterAddress = $("#voterAddress").val();
 	var candidateName = $("#candidateSelectName").val();
 	candidateId = getCandidateID(candidateName);
-	var proposalResults = [];
+	var proposalResults = await getProposalVotes();
 
-	getProposalsNumber().then(proposalsNumber =>{
-		var proposalResults = new Array(proposalsNumber).fill(false);
-		for(var i = 0; i < proposalsNumber; i++){
-			proposalResults.push($("#radio"+i).val() == "True");
-		}
-	});
+	// getProposalsNumber().then(proposalsNumber =>{
+	// 	var proposalResults = new Array(proposalsNumber).fill(false);
+	// 	for(var i = 0; i < proposalsNumber; i++){
+	// 		proposalResults.push($("#radio"+i).val() == "True");
+	// 	}
+	// });
 
 	getCandidateID(candidateName).then(candidateId =>{
 		candidateId = candidateId.c[0];
@@ -721,8 +738,9 @@ function vote() {
 								else 
 								{	
 										SimpleVoting.deployed()
+										//.then(instance => instance.vote(0, [true, false], {from:"0x143A27aBD73B990D7c8a55cfFD56eD7792F8f883", gas:200000}))
 									   .then(instance => instance.vote(candidateId, proposalResults, {from:voterAddress, gas:200000}))
-									   .catch(e => $("#voteConfirmationMessage").html(e));
+									   .catch(e => $("#voteConfirmationMessage").html(e + "proposalResults: " + proposalResults));
 								}
 							});
 					}
