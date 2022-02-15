@@ -564,13 +564,13 @@ async function loadCandidatesTable() {
 	
 	instance = await SimpleVoting.deployed();
 	candidatesNumber = await instance.getCandidatesNumber();
-	var innerHtml = "<tr><td><b>ID</b></td><td><b>Name</b></td><td><b>Party</b></td>";
+	var innerHtml = "<tr><td><b>Name</b></td><td><b>Party</b></td>";
 		
 		j = 0;
 		for (var i = 0; i < candidatesNumber; i++) {
 			description = await getCandidateName(i);
 			party = await getCandidateParty(i);
-			innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td><td>"+ party + "</td></tr>";
+			innerHtml = innerHtml + "<tr><td>" + description + "</td><td>"+ party + "</td></tr>";
 			$("#candidatesTable").html(innerHtml);
 		}
 }
@@ -578,12 +578,12 @@ async function loadProposalsTable() {
 	
 	instance = await SimpleVoting.deployed();
 	proposalsNumber = await instance.getProposalsNumber();
-	var innerHtml = "<tr><td><b>ID</b></td><td><b>Description</b></td><td><b>Vote</b></td>";
+	var innerHtml = "<tr><td><b>Description</b></td><td><b>Vote</b></td>";
 		
 		j = 0;
 		for (var i = 0; i < proposalsNumber; i++) {
 			description = await getProposalDescription(i);
-			innerHtml = innerHtml + "<tr><td>" + (j++) + "</td><td>" + description + "</td><td><input type=\"radio\" name=\"radio"+i+"\" id=\"radio"+i+"\" value='True'>Yay</input><input type=\"radio\" name=\"radio"+i+"\" id=\"radio"+i+"\" value='False' checked>Nay</input></td></tr>";
+			innerHtml = innerHtml + "<tr><td>" + description + "</td><td><input type=\"radio\" name=\"radio"+i+"\" id=\"radio"+i+"\" value='True'>Yay</input><input type=\"radio\" name=\"radio"+i+"\" id=\"radio"+i+"\" value='False' checked>Nay</input></td></tr>";
 			$("#proposalsTable").html(innerHtml);
 		}
 }
