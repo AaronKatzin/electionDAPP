@@ -2,7 +2,7 @@
 
 In order to use this DAPP:
 
-1. Clone this repo.
+1. Clone this repo from https://github.com/AaronKatzin/electionDAPP.
 
 2. CD to the project root.
 
@@ -10,7 +10,11 @@ In order to use this DAPP:
 
 4. Install and open Ganache, then quickstart ethereum.
 
-5. Run run.cmd to compile/migrate contracts, start the web server, and open the voter page.
+5. Install MetaMask, import the accounts from ganache based on the MNEMONIC/seeder phrase
+
+6. Run run.cmd to compile/migrate contracts, start the web server, and open the voter page.
+
+7. Import the compiled Election contract hash as a new token in MetaMask and it will show up as the VT token
 
 
 
