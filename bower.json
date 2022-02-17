@@ -1,0 +1,21 @@
+{
+  "name": "election",
+  "description": "",
+  "main": "truffle.js",
+  "authors": [
+    "akatzin <aaron.katzin@intel.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/AaronKatzin/electionDAPP",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.6.0",
+    "web3": "0.20.6"
+  }
+}
