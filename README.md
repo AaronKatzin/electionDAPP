@@ -1,5 +1,7 @@
 # electionDAPP
 
+THE SOURCE CODE WAS WAY TOO LARGE TO UPLOAD TO MOODLE, SO PLEASE DOWNLOAD THE CODE FROM https://github.com/AaronKatzin/electionDAPP
+
 In order to use this DAPP:
 
 1. Clone this repo from https://github.com/AaronKatzin/electionDAPP.
